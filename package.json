@@ -6,12 +6,15 @@
   "scripts": {
     "test": "jest --watchAll",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start-redis": "redis-server --daemonize yes",
+    "dev-peer": "cross-env GENERATE_PEER_PORT='true' nodemon index.js",
+    "dev": "npm run start-redis && nodemon index.js"
   },
   "keywords": [],
   "author": "Julia Kharlamova",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^23.6.0",
     "nodemon": "^2.0.16"
   },
@@ -19,6 +22,7 @@
     "body-parser": "^1.20.0",
     "express": "^4.18.1",
     "hex-to-binary": "^1.0.1",
-    "redis": "^2.8.0"
+    "redis": "^2.8.0",
+    "request": "^2.88.2"
   }
 }
