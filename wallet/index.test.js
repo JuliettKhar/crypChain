@@ -15,7 +15,7 @@ describe('Wallet', () => {
         expect(wallet).toHaveProperty('publicKey')
     });
 
-    describe('signin data', () => {
+    describe('signing data', () => {
         const data = 'foobar'
 
         it('should verifies a signature', () => {
