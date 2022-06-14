@@ -86,7 +86,9 @@ describe('blockchain', () => {
     })
 
     describe('replaceChain()', () => {
-        let errorMock, logMock;
+        let errorMock;
+        let logMock;
+
         beforeEach(() => {
             errorMock = jest.fn();
             logMock = jest.fn();
@@ -104,9 +106,9 @@ describe('blockchain', () => {
                 expect(blockchain.chain).toEqual(originalChain)
             });
 
-            // it('should logs err', () => {
-            //     expect(errorMock).toHaveBeenCalled()
-            // });
+            it('should logs err', () => {
+                expect(errorMock).toHaveBeenCalled()
+            });
         })
         describe('is the chain is longer', () => {
             beforeEach(() => {
@@ -124,7 +126,7 @@ describe('blockchain', () => {
                 it('does not replace the chain', () => {
                     expect(blockchain.chain).toEqual(originalChain)
                 });
-                it.skip('should logs err', () => {
+                it('should logs err', () => {
                     expect(errorMock).toHaveBeenCalled()
                 });
             })
@@ -135,7 +137,7 @@ describe('blockchain', () => {
                 it('replaces the chain', () => {
                     expect(blockchain.chain).toEqual(newChain.chain)
                 });
-                it.skip('should logs err', () => {
+                it('should logs err', () => {
                     expect(logMock).toHaveBeenCalled()
                 });
             })
