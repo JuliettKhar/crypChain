@@ -1,6 +1,7 @@
 const TransactionPool = require('./transaction-pool')
 const Transaction = require('./transaction')
 const Wallet = require('./index')
+const Blockchain = require("../blockchain");
 
 describe('TransactionPool', () => {
     let transactionPool, transaction, senderWallet;
@@ -65,6 +66,39 @@ describe('TransactionPool', () => {
         it('should logs errors for invalid transactions', () => {
             transactionPool.validTransactions();
             expect(errorMock).toHaveBeenCalled();
+        });
+    })
+
+    describe('clear()', () => {
+        it('should clears the transaction', function () {
+            transactionPool.clear()
+
+            expect(transactionPool.transactionMap).toEqual({})
+        });
+    })
+
+    describe('clearBlockChainTransactions()', () => {
+        it('should clears the pool of any existing blockchain transactions', function () {
+            const blockchain = new Blockchain();
+            const expectedTransactionMap = {}
+
+            for (let i = 0; i < 6; i++) {
+                const transaction = new Wallet().createTransaction({
+                    recipient: 'foo',
+                    foo: 20
+                })
+
+                transactionPool.setTransaction(transaction)
+
+                if (i % 2 === 0) {
+                    blockchain.addBlock({ data: [transaction] })
+                } else {
+                    expectedTransactionMap[transaction.id] = transaction
+                }
+            }
+
+            transactionPool.clearBlockchainTransactions({ chain: blockchain.chain})
+            expect(transactionPool.transactionMap).toEqual(expectedTransactionMap)
         });
     })
 })
