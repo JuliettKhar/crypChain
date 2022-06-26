@@ -27,7 +27,11 @@ class PubSub {
 
         switch (ch) {
             case CHANNELS.BLOCKCHAIN:
-              this.blockchain.replaceChain(parsedMsg)
+              this.blockchain.replaceChain(parsedMsg, () => {
+                  this.transactionPool.clearBlockchainTransactions({
+                      chain: parsedMsg
+                  })
+              })
               break
             case CHANNELS.TRANSACTION:
                 this.transactionPool.setTransaction(parsedMsg)

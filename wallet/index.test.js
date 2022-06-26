@@ -66,4 +66,8 @@ describe('Wallet', () => {
             });
         })
     })
+
+    describe('calculateBalance()', () => {
+
+    })
 })
