@@ -39,7 +39,7 @@ app.post('/api/transact', ((req, res) => {
         if (transaction) {
             transaction.update({senderWallet: wallet, recipient, amount})
         } else {
-            transaction = wallet.createTransaction(({recipient, amount}))
+            transaction = wallet.createTransaction(({recipient, amount, chain: blockchain.chain}))
         }
     } catch (e) {
         return res.status(400).json({type: 'error', message: e.message})
@@ -58,6 +58,16 @@ app.get('/api/mine-transactions', (req, res) => {
     transactionMiner.mineTransaction()
 
     res.redirect('/api/blocks')
+})
+
+app.get('/api/wallet-info', (req, res) => {
+    res.json({
+        address: wallet.publicKey,
+        balance: Wallet.calculateBalance({
+            chain: blockchain.chain,
+            address: wallet.publicKey,
+        })
+    })
 })
 
 

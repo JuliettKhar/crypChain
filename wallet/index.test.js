@@ -67,6 +67,24 @@ describe('Wallet', () => {
                 expect(transaction.outputMap[recipient]).toEqual(amount)
             });
         })
+
+        describe('chain is passed', () => {
+            it('should calls Wallet.calculateBalance', () => {
+                const calculateBalanceMock = jest.fn()
+                const originalCalculateBalance = Wallet.calculateBalance;
+
+                Wallet.calculateBalance = calculateBalanceMock;
+
+                wallet.createTransaction({
+                    recipient: 'foo',
+                    amount: 50,
+                    chain: new Blockchain().chain
+                })
+
+                expect(calculateBalanceMock).toHaveBeenCalled();
+                Wallet.calculateBalance = originalCalculateBalance;
+            });
+        })
     })
 
     describe('calculateBalance()', () => {
@@ -77,7 +95,7 @@ describe('Wallet', () => {
         })
 
         describe('and there are no outputs for the wallet', () => {
-            it('should returns the STARTING_BALANCE', function () {
+            it('should returns the STARTING_BALANCE', () => {
                 expect(Wallet.calculateBalance({
                     chain: blockchain.chain,
                     address: wallet.publicKey
@@ -101,7 +119,7 @@ describe('Wallet', () => {
                 blockchain.addBlock({ data: [transactionOne, transactionTwo ]})
             })
 
-            it('should adds the sum of all outputs to the wallet balance', function () {
+            it('should adds the sum of all outputs to the wallet balance', () => {
                 expect(Wallet.calculateBalance({
                     chain: blockchain.chain,
                     address: wallet.publicKey
@@ -110,6 +128,66 @@ describe('Wallet', () => {
                     transactionTwo.outputMap[wallet.publicKey]
                 )
             });
+        })
+
+        describe('wallet has made a transaction', () => {
+            let recentTransaction;
+
+            beforeEach(() => {
+                recentTransaction = wallet.createTransaction({
+                    recentTransaction: 'foo-address',
+                    amount: 30
+                })
+
+                blockchain.addBlock({ data: [recentTransaction]})
+
+            })
+
+            it('should returns the output amount of the recent transaction', function () {
+                expect(
+                    Wallet.calculateBalance({
+                        chain: blockchain.chain,
+                        address: wallet.publicKey
+                    })
+                ).toEqual(recentTransaction.outputMap[wallet.publicKey])
+
+            });
+
+            describe('outputs next to and after the recent transaction', () => {
+                let sameBlockTransaction, nextBlockTransaction;
+
+                beforeEach(() => {
+                    recentTransaction = wallet.createTransaction({
+                        recipient: 'later-foo-address',
+                        amount: 60
+                    });
+
+                    sameBlockTransaction = Transaction.rewardTransaction({ minerWallet: wallet})
+
+                    blockchain.addBlock({ data: [recentTransaction, sameBlockTransaction ]})
+
+                    nextBlockTransaction = new Wallet().createTransaction({
+                        recipient: wallet.publicKey,
+                        amount: 75
+                    })
+
+                    blockchain.addBlock({ data: [nextBlockTransaction]});
+
+                })
+
+                it('should includes the output amounts in the returned balance', function () {
+                    expect(
+                        Wallet.calculateBalance({
+                            chain: blockchain.chain,
+                            address: wallet.publicKey
+                        })
+                    ).toEqual(
+                        recentTransaction.outputMap[wallet.publicKey] +
+                        sameBlockTransaction.outputMap[wallet.publicKey] +
+                        nextBlockTransaction.outputMap[wallet.publicKey]
+                    )
+                });
+            })
         })
     })
 })
