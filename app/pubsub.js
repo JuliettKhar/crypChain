@@ -7,7 +7,7 @@ const CHANNELS = {
 }
 
 class PubSub {
-    constructor({ blockchain, transactionPool }) {
+    constructor({blockchain, transactionPool}) {
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
 
@@ -27,12 +27,12 @@ class PubSub {
 
         switch (ch) {
             case CHANNELS.BLOCKCHAIN:
-              this.blockchain.replaceChain(parsedMsg, true, () => {
-                  this.transactionPool.clearBlockchainTransactions({
-                      chain: parsedMsg
-                  })
-              })
-              break
+                this.blockchain.replaceChain(parsedMsg, true, () => {
+                    this.transactionPool.clearBlockchainTransactions({
+                        chain: parsedMsg
+                    });
+                })
+                break
             case CHANNELS.TRANSACTION:
                 this.transactionPool.setTransaction(parsedMsg)
                 break
@@ -41,9 +41,11 @@ class PubSub {
 
         }
     }
+
     subscribeToChannels() {
-      Object.values(CHANNELS).forEach(channel => this.subscriber.subscribe(channel))
+        Object.values(CHANNELS).forEach(channel => this.subscriber.subscribe(channel))
     }
+
     publish({channel, message}) {
         this.subscriber.unsubscribe(channel, () => {
             this.publisher.publish(channel, message, () => {
@@ -53,17 +55,19 @@ class PubSub {
         })
         this.publisher.publish(channel, message)
     }
+
     broadcastChain() {
         this.publish({
             channel: CHANNELS.BLOCKCHAIN,
             message: JSON.stringify(this.blockchain.chain)
         })
     }
+
     broadcastTransaction(transaction) {
-       this.publish({
-           channel: CHANNELS.TRANSACTION,
-           message: JSON.stringify(transaction)
-       })
+        this.publish({
+            channel: CHANNELS.TRANSACTION,
+            message: JSON.stringify(transaction)
+        })
     }
 }
 
