@@ -29,7 +29,21 @@ body {
     margin: 2%;
 }
 
+.Block p {
+    min-height: 60px;
+    text-align: left;
+}
+
 .Blocks-Wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 }
+
+.Transaction {
+    padding: 5%;
+}
+
+.Transaction-Wrapper hr {
+    background: #fff;
+}
+
