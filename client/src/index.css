@@ -47,3 +47,16 @@ body {
     background: #fff;
 }
 
+a, a:hover {
+    color: #e66;
+    text-decoration: underline;
+}
+
+.ConductTransaction {
+    margin: 10%;
+}
+
+.ConductTransaction > input {
+    margin-bottom: 20px;
+}
+
