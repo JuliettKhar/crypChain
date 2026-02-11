@@ -12,8 +12,3 @@ CrypChain demonstrates the basic backbone of a blockchain:
 - integrity validation
 
 Designed as a learning project to understand decentralized ledger fundamentals.
-
-## Tech Stack
-
-- TypeScript
-- Node.js
